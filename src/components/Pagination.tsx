@@ -64,7 +64,7 @@ class Pagination extends React.Component<Props, State> {
             {
               this.getPages().map((value, index) =>
                   <li key={index}>
-                    <button onClick={() => this.handleHrefChange(value)}>{value}</button>
+                    <button className={this.props.current === value ? 'active' : ''} onClick={() => this.handleHrefChange(value)}>{value}</button>
                   </li>
               )
             }

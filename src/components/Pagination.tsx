@@ -12,7 +12,6 @@ interface Props {
 class Pagination extends React.Component<Props, State> {
   componentWillReceiveProps(
       nextProps: Readonly<Props>, nextContext: any): void {
-    console.log(nextProps)
   }
 
   handleHrefChange = (page: number) => {

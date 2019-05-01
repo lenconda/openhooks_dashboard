@@ -1,8 +1,5 @@
 import React from 'react'
 import http from '../../../util/http'
-import Alert from '../../../components/Alert'
-
-import { history } from '../../../App'
 import Pagination from '../../../components/Pagination'
 
 interface Props {
@@ -16,7 +13,10 @@ interface State {
   createCommand: string
   createDescription: string
   createAuthentication: string
-  showSuccessAlert: boolean
+  editUuid: string
+  editCommand: string
+  editDescription: string
+  editAuthentication: string
 }
 
 class Hooks extends React.Component<Props, State> {
@@ -29,8 +29,11 @@ class Hooks extends React.Component<Props, State> {
       data: [],
       createCommand: '',
       createDescription: '',
-      createAuthentication: '0',
-      showSuccessAlert: false
+      createAuthentication: '1',
+      editUuid: '',
+      editCommand: '',
+      editDescription: '',
+      editAuthentication: ''
     }
   }
 
@@ -57,6 +60,39 @@ class Hooks extends React.Component<Props, State> {
     })
   }
 
+  handleEditHook = (item: any) => {
+    this.setState({
+      editUuid: item.uuid,
+      editCommand: item.command,
+      editDescription: item.description,
+      editAuthentication: item.auth ? '0' : '1'
+    })
+  }
+
+  clearEditHook = () => {
+    this.setState({
+      editUuid: '',
+      editCommand: '',
+      editDescription: '',
+      editAuthentication: ''
+    })
+  }
+
+  updateHook = () => {
+    http.put(`/api/hook/${this.state.editUuid}`, {
+      updates: {
+        command: this.state.editCommand,
+        description: this.state.editDescription,
+        auth: this.state.editAuthentication === '0'
+      }
+    })
+    .then(res => {
+      this.getHooks(this.state.currentPage)
+      this.clearEditHook()
+      // ToastsStore.success(res.data.data)
+    })
+  }
+
   createHook = () => {
     http.post('/api/hooks', {
       command: this.state.createCommand,
@@ -66,23 +102,36 @@ class Hooks extends React.Component<Props, State> {
       if (res.status === 200) {
         this.getHooks(this.props.match.params.page)
         this.setState({
-          showSuccessAlert: true,
           createCommand: '',
           createDescription: '',
           createAuthentication: '0'
         })
+        // ToastsStore.success(res.data.data)
       }
     })
+  }
+
+  deleteHook = (uuid: string) => {
+    if (window.confirm(`Sure to delete hook /hooks/${uuid}?`))
+      http.delete(`/api/hook/${uuid}`)
+        .then(res => {
+          this.getHooks(this.state.currentPage)
+          // ToastsStore.success(res.data.data)
+        })
+  }
+
+  clearHooks = () => {
+    if (window.confirm(`Sure to CLEAR ALL hooks?`))
+      http.delete('/api/hooks')
+      .then(res => {
+        this.getHooks(this.state.currentPage)
+        // ToastsStore.success(res.data.data)
+      })
   }
 
   render() {
     return (
         <div>
-          <Alert type="success"
-                 show={this.state.showSuccessAlert}
-                 handleClose={value => this.setState({ showSuccessAlert: value })} >
-            Successfully create a hook
-          </Alert>
           <div className="container-fluid">
             <div className="row">
               <div className="panel panel-default">
@@ -94,7 +143,7 @@ class Hooks extends React.Component<Props, State> {
                   <button type="button"
                           className="btn btn-danger btn-sm"
                           style={{marginLeft: 10}}
-                          data-toggle="modal" data-target="#add_hook">
+                          onClick={this.clearHooks}>
                     <i className="fa fa-trash"></i>&nbsp;Clear All
                   </button>
                 </div>
@@ -119,11 +168,21 @@ class Hooks extends React.Component<Props, State> {
                                     <td><code>/hooks/{item.uuid}</code></td>
                                     <td><code>{item.command}</code></td>
                                     <td>{item.description}</td>
-                                    <td>{item.auth ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i>}</td>
+                                    <td style={{textAlign: 'center'}}>
+                                      {item.auth ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i>}
+                                    </td>
                                     <td>{item.updateTime}</td>
                                     <td>
-                                      <button className="btn btn-xs btn-danger"><i className="fa fa-trash"></i> Delete</button>
-                                      <button className="btn btn-xs btn-warning" style={{marginLeft: 5}}>
+                                      <button className="btn btn-xs btn-danger"
+                                              onClick={() => {this.deleteHook(item.uuid)}}>
+                                        <i className="fa fa-trash"></i> Delete
+                                      </button>
+                                      <button type="button"
+                                              className="btn btn-xs btn-warning"
+                                              data-toggle="modal"
+                                              data-target="#edit_hook"
+                                              style={{marginLeft: 5}}
+                                              onClick={() => this.handleEditHook(item)}>
                                         <i className="fa fa-edit"></i> Edit
                                       </button>
                                     </td>
@@ -134,9 +193,12 @@ class Hooks extends React.Component<Props, State> {
                         </table>
                   }
                 </div>
-                <div className="panel-footer">
-                  <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/hooks" />
-                </div>
+                {
+                  this.state.data.length === 0 ? null :
+                      <div className="panel-footer">
+                        <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/hooks" />
+                      </div>
+                }
               </div>
             </div>
           </div>
@@ -174,8 +236,65 @@ class Hooks extends React.Component<Props, State> {
                 </div>
                 <div className="modal-footer">
                   <button className="btn btn-sm btn-default" data-dismiss="modal"><i className="fa fa-times"></i> Cancel</button>
-                  <button className="btn btn-sm btn-primary" data-dismiss="modal" onClick={this.createHook}>
+                  <button
+                      className="btn btn-sm btn-primary"
+                      data-dismiss="modal"
+                      onClick={this.createHook}
+                      disabled={this.state.createAuthentication === ''
+                      || this.state.createDescription === ''
+                      || this.state.createCommand === ''}>
                     <i className="fa fa-save"></i> Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal fade" id="edit_hook" role="dialog"
+               aria-labelledby="myModalLabel">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <button type="button" className="close" data-dismiss="modal"
+                          aria-label="Close"><span
+                      aria-hidden="true">&times;</span></button>
+                  <h4 className="modal-title" id="myModalLabel">
+                    <i className="fa fa-edit"></i> Edit Hook {this.state.editUuid}
+                  </h4>
+                </div>
+                <div className="modal-body">
+                  <div className="form-group">
+                    <label>Shell command</label>
+                    <textarea className="form-control"
+                              value={this.state.editCommand}
+                              onChange={e => this.setState({ editCommand: e.target.value })}/>
+                  </div>
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea className="form-control"
+                              value={this.state.editDescription}
+                              onChange={e => this.setState({ editDescription: e.target.value })}/>
+                  </div>
+                  <div className="form-group">
+                    <label>Authentication</label>
+                    <select className="form-control"
+                            onChange={e => this.setState({ editAuthentication: e.target.value })}>
+                      <option value="0" selected={this.state.editAuthentication === '0'}>Use access key</option>
+                      <option value="1" selected={this.state.editAuthentication === '1'}>Do not use any key</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-sm btn-default" data-dismiss="modal" onClick={this.clearEditHook}>
+                    <i className="fa fa-times"></i> Cancel
+                  </button>
+                  <button
+                      className="btn btn-sm btn-primary"
+                      data-dismiss="modal"
+                      onClick={this.updateHook}
+                      disabled={this.state.editAuthentication === ''
+                      || this.state.editAuthentication === ''
+                      || this.state.editAuthentication === ''}>
+                    <i className="fa fa-save"></i> Update
                   </button>
                 </div>
               </div>

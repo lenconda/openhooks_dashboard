@@ -4,6 +4,7 @@ import './Dashboard.css'
 import http from '../../util/http'
 
 import Hooks from './hooks/Hooks'
+import Keys from './keys/Keys'
 
 interface Props {}
 interface State {
@@ -46,9 +47,9 @@ class Dashboard extends React.Component<Props, State> {
               </div>
               <div className="collapse navbar-collapse" id="menu">
                 <ul className="nav navbar-nav">
-                  <li><NavLink activeClassName="menu-active" to="/dashboard/hooks">Hooks</NavLink></li>
-                  <li><NavLink activeClassName="menu-active"  to="/dashboard/keys">Keys</NavLink></li>
-                  <li><NavLink activeClassName="menu-active"  to="/dashboard/histories">Histories</NavLink></li>
+                  <li><NavLink activeClassName="menu-active" to="/dashboard/hooks/1/">Hooks</NavLink></li>
+                  <li><NavLink activeClassName="menu-active"  to="/dashboard/keys/1/">Keys</NavLink></li>
+                  <li><NavLink activeClassName="menu-active"  to="/dashboard/histories/1/">Histories</NavLink></li>
                 </ul>
                 <ul className="nav navbar-nav navbar-right">
                   <li className="dropdown">
@@ -70,6 +71,7 @@ class Dashboard extends React.Component<Props, State> {
           </nav>
           <Switch>
             <Route path={'/dashboard/hooks/:page'} component={Hooks}/>
+            <Route path={'/dashboard/keys/:page'} component={Keys}/>
             <Redirect to={'/dashboard/hooks/1/'}/>
           </Switch>
         </div>

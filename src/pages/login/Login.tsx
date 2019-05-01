@@ -27,9 +27,9 @@ class Login extends React.Component<Props, State> {
     http.post('/api/login', { username, password })
         .then(res => {
           if (this.state.rememberUser)
-            localStorage.setItem('token', res.data.data)
+            localStorage.setItem('token', res.data.data.token)
           else
-            sessionStorage.setItem('token', res.data.data)
+            sessionStorage.setItem('token', res.data.data.token)
           history.push('/dashboard/hooks')
         })
   }
@@ -62,7 +62,7 @@ class Login extends React.Component<Props, State> {
                       <input type="checkbox"
                              checked={this.state.rememberUser}
                              onChange={e => this.setState({ rememberUser: !this.state.rememberUser })}/>&nbsp;
-                      Remember user
+                      Remember me
                     </label>
                   </div>
                   <div className="input-group">

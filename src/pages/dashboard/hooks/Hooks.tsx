@@ -52,11 +52,12 @@ class Hooks extends React.Component<Props, State> {
   getHooks = (page: number) => {
     http.get(`/api/hooks?page=${page}`)
     .then(res => {
-      this.setState({
-        next: res.data.data.next,
-        data: res.data.data.items,
-        pages: res.data.data.pages
-      })
+      if (res)
+        this.setState({
+          next: res.data.data.next,
+          data: res.data.data.items,
+          pages: res.data.data.pages
+        })
     })
   }
 
@@ -87,8 +88,9 @@ class Hooks extends React.Component<Props, State> {
       }
     })
     .then(res => {
-      this.getHooks(this.state.currentPage)
-      this.clearEditHook()
+      if (res)
+        this.getHooks(this.state.currentPage)
+        this.clearEditHook()
     })
   }
 
@@ -98,7 +100,7 @@ class Hooks extends React.Component<Props, State> {
       description: this.state.createDescription,
       auth: this.state.createAuthentication === '0'
     }).then(res => {
-      if (res.status === 200) {
+      if (res) {
         this.getHooks(this.props.match.params.page)
         this.setState({
           createCommand: '',
@@ -113,7 +115,8 @@ class Hooks extends React.Component<Props, State> {
     if (window.confirm(`Sure to delete hook /hooks/${uuid}?`))
       http.delete(`/api/hook/${uuid}`)
         .then(res => {
-          this.getHooks(this.state.currentPage)
+          if (res)
+            this.getHooks(this.state.currentPage)
         })
   }
 
@@ -121,7 +124,8 @@ class Hooks extends React.Component<Props, State> {
     if (window.confirm(`Sure to CLEAR ALL hooks?`))
       http.delete('/api/hooks')
       .then(res => {
-        this.getHooks(this.state.currentPage)
+        if (res)
+          this.getHooks(this.state.currentPage)
       })
   }
 
@@ -164,7 +168,7 @@ class Hooks extends React.Component<Props, State> {
                                     <td><code>/hooks/{item.uuid}</code></td>
                                     <td><code>{item.command}</code></td>
                                     <td>{item.description}</td>
-                                    <td style={{textAlign: 'center'}}>
+                                    <td className="text-center">
                                       {item.auth ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i>}
                                     </td>
                                     <td>{item.updateTime}</td>
@@ -206,7 +210,7 @@ class Hooks extends React.Component<Props, State> {
                   <button type="button" className="close" data-dismiss="modal"
                           aria-label="Close"><span
                       aria-hidden="true">&times;</span></button>
-                  <h4 className="modal-title" id="myModalLabel"><i className="fa fa-lightbulb"></i> Add a Hook</h4>
+                  <h4 className="modal-title text-ellipsis" id="myModalLabel"><i className="fa fa-lightbulb"></i> Add a Hook</h4>
                 </div>
                 <div className="modal-body">
                   <div className="form-group">
@@ -253,7 +257,7 @@ class Hooks extends React.Component<Props, State> {
                   <button type="button" className="close" data-dismiss="modal"
                           aria-label="Close"><span
                       aria-hidden="true">&times;</span></button>
-                  <h4 className="modal-title" id="myModalLabel">
+                  <h4 className="modal-title text-ellipsis" id="myModalLabel">
                     <i className="fa fa-edit"></i> Edit Hook {this.state.editUuid}
                   </h4>
                 </div>

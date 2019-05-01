@@ -54,17 +54,18 @@ class Keys extends React.Component<Props, State> {
   getKeys = (page: number) => {
     http.get(`/api/keys?page=${page}`)
     .then(res => {
-      this.setState({
-        next: res.data.data.next,
-        data: res.data.data.items,
-        pages: res.data.data.pages
-      })
+      if (res)
+        this.setState({
+          next: res.data.data.next,
+          data: res.data.data.items,
+          pages: res.data.data.pages
+        })
     })
   }
 
   generateKey = () => {
     http.post('/api/keys', {}).then(res => {
-      if (res.status === 200)
+      if (res)
         this.getKeys(this.props.match.params.page)
     })
   }
@@ -73,7 +74,8 @@ class Keys extends React.Component<Props, State> {
     if (window.confirm(`Sure to delete key ${key}?`))
       http.delete(`/api/key/${key}`)
         .then(res => {
-          this.getKeys(this.state.currentPage)
+          if (res)
+            this.getKeys(this.state.currentPage)
         })
   }
 
@@ -81,7 +83,8 @@ class Keys extends React.Component<Props, State> {
     if (window.confirm(`Sure to CLEAR ALL keys?`))
       http.delete('/api/keys')
       .then(res => {
-        this.getKeys(this.state.currentPage)
+        if (res)
+          this.getKeys(this.state.currentPage)
       })
   }
 

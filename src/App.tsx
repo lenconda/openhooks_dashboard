@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import { createHashHistory } from 'history'
-import { Route, Router } from 'react-router-dom'
+import { Route, Router, Redirect, Switch } from 'react-router-dom'
 import {
   ToastsContainer,
   ToastsContainerPosition,
@@ -16,8 +16,11 @@ class App extends React.Component {
     return (
         <div>
           <Router history={history}>
-            <Route path={'/login'} component={Login}/>
-            <Route path={'/dashboard'} component={Dashboard}/>
+            <Switch>
+              <Route path={'/login'} component={Login}/>
+              <Route path={'/dashboard'} component={Dashboard}/>
+              <Redirect to={'/dashboard'}/>
+            </Switch>
           </Router>
           <ToastsContainer position={ToastsContainerPosition.TOP_RIGHT} store={ToastsStore}/>
         </div>

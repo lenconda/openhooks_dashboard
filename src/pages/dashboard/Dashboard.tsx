@@ -69,8 +69,8 @@ class Dashboard extends React.Component<Props, State> {
             </div>
           </nav>
           <Switch>
-            <Route path={'/dashboard/hooks'} component={Hooks}/>
-            <Redirect to={'/dashboard/hooks'}/>
+            <Route path={'/dashboard/hooks/:page'} component={Hooks}/>
+            <Redirect to={'/dashboard/hooks/1/'}/>
           </Switch>
         </div>
     )

@@ -2,10 +2,17 @@ import React from 'react'
 import http from '../../../util/http'
 import Alert from '../../../components/Alert'
 
-interface Props {}
+import { history } from '../../../App'
+import Pagination from '../../../components/Pagination'
+
+interface Props {
+  match: any
+}
 interface State {
   next: boolean
   data: any[]
+  currentPage: number
+  pages: number
   createCommand: string
   createDescription: string
   createAuthentication: string
@@ -16,6 +23,8 @@ class Hooks extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
+      currentPage: 1,
+      pages: 1,
       next: false,
       data: [],
       createCommand: '',
@@ -26,15 +35,24 @@ class Hooks extends React.Component<Props, State> {
   }
 
   componentDidMount(): void {
-    this.getHooks()
+    this.getHooks(this.props.match.params.page)
   }
 
-  getHooks = () => {
-    http.get('/api/hooks')
+  componentWillReceiveProps(
+      nextProps: Readonly<Props>, nextContext: any): void {
+    this.setState({
+      currentPage: parseInt(nextProps.match.params.page)
+    })
+    this.getHooks(nextProps.match.params.page)
+  }
+
+  getHooks = (page: number) => {
+    http.get(`/api/hooks?page=${page}`)
     .then(res => {
       this.setState({
         next: res.data.data.next,
-        data: res.data.data.items
+        data: res.data.data.items,
+        pages: res.data.data.pages
       })
     })
   }
@@ -46,7 +64,7 @@ class Hooks extends React.Component<Props, State> {
       auth: this.state.createAuthentication === '0'
     }).then(res => {
       if (res.status === 200) {
-        this.getHooks()
+        this.getHooks(this.props.match.params.page)
         this.setState({
           showSuccessAlert: true,
           createCommand: '',
@@ -115,6 +133,9 @@ class Hooks extends React.Component<Props, State> {
                           </tbody>
                         </table>
                   }
+                </div>
+                <div className="panel-footer">
+                  <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/hooks" />
                 </div>
               </div>
             </div>

@@ -28,16 +28,14 @@ class Pagination extends React.Component<Props, State> {
       for (let i = current - 2; i <= current + 2; i++)
         pages.push(i)
     else if (left < 2 && right >= 2) {
-      for (let i = 1; i <= current; i++)
+      const last = this.props.total > 5 ? 5 : this.props.total
+      for (let i = 1; i <= last; i++)
         pages.push(i)
-      pages.push(current + 1)
-      pages.push(current + 2)
     }
     else if (right < 2 && left >= 2) {
-      for (let i = current; i <= this.props.total; i++)
+      const first = this.props.total > 5 ? this.props.total - 4 : 1
+      for (let i = first; i <= this.props.total; i++)
         pages.push(i)
-      pages.unshift(current - 1)
-      pages.unshift(current - 2)
     } else
       for (let i = 1; i <= this.props.total; i++)
         pages.push(i)

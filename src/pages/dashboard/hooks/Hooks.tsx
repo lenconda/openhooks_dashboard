@@ -89,7 +89,6 @@ class Hooks extends React.Component<Props, State> {
     .then(res => {
       this.getHooks(this.state.currentPage)
       this.clearEditHook()
-      // ToastsStore.success(res.data.data)
     })
   }
 
@@ -106,7 +105,6 @@ class Hooks extends React.Component<Props, State> {
           createDescription: '',
           createAuthentication: '0'
         })
-        // ToastsStore.success(res.data.data)
       }
     })
   }
@@ -116,7 +114,6 @@ class Hooks extends React.Component<Props, State> {
       http.delete(`/api/hook/${uuid}`)
         .then(res => {
           this.getHooks(this.state.currentPage)
-          // ToastsStore.success(res.data.data)
         })
   }
 
@@ -125,7 +122,6 @@ class Hooks extends React.Component<Props, State> {
       http.delete('/api/hooks')
       .then(res => {
         this.getHooks(this.state.currentPage)
-        // ToastsStore.success(res.data.data)
       })
   }
 

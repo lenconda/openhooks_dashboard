@@ -1,5 +1,6 @@
 import React from 'react'
 import http from '../../../util/http'
+import Alert from '../../../components/Alert'
 
 interface Props {}
 interface State {
@@ -8,6 +9,7 @@ interface State {
   createCommand: string
   createDescription: string
   createAuthentication: string
+  showSuccessAlert: boolean
 }
 
 class Hooks extends React.Component<Props, State> {
@@ -18,18 +20,23 @@ class Hooks extends React.Component<Props, State> {
       data: [],
       createCommand: '',
       createDescription: '',
-      createAuthentication: '0'
+      createAuthentication: '0',
+      showSuccessAlert: false
     }
   }
 
   componentDidMount(): void {
+    this.getHooks()
+  }
+
+  getHooks = () => {
     http.get('/api/hooks')
-        .then(res => {
-          this.setState({
-            next: res.data.data.next,
-            data: res.data.data.items
-          })
-        })
+    .then(res => {
+      this.setState({
+        next: res.data.data.next,
+        data: res.data.data.items
+      })
+    })
   }
 
   createHook = () => {
@@ -39,7 +46,9 @@ class Hooks extends React.Component<Props, State> {
       auth: this.state.createAuthentication === '0'
     }).then(res => {
       if (res.status === 200) {
+        this.getHooks()
         this.setState({
+          showSuccessAlert: true,
           createCommand: '',
           createDescription: '',
           createAuthentication: '0'
@@ -51,6 +60,11 @@ class Hooks extends React.Component<Props, State> {
   render() {
     return (
         <div>
+          <Alert type="success"
+                 show={this.state.showSuccessAlert}
+                 handleClose={value => this.setState({ showSuccessAlert: value })} >
+            Successfully create a hook
+          </Alert>
           <div className="container-fluid">
             <div className="row">
               <div className="panel panel-default">
@@ -82,8 +96,8 @@ class Hooks extends React.Component<Props, State> {
                           </thead>
                           <tbody>
                             {
-                              this.state.data.map(item =>
-                                  <tr>
+                              this.state.data.map((item, index) =>
+                                  <tr key={index}>
                                     <td><code>/hooks/{item.uuid}</code></td>
                                     <td><code>{item.command}</code></td>
                                     <td>{item.description}</td>

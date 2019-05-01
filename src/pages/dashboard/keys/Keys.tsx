@@ -1,6 +1,7 @@
 import React from 'react'
 import http from '../../../util/http'
 import Pagination from '../../../components/Pagination'
+import { getFormattedTime } from '../../../util/time'
 
 interface Props {
   match: any
@@ -123,7 +124,7 @@ class Keys extends React.Component<Props, State> {
                               this.state.data.map((item, index) =>
                                   <tr key={index}>
                                     <td><code>{item.value}</code></td>
-                                    <td>{item.createTime}</td>
+                                    <td>{getFormattedTime(item.createTime)}</td>
                                     <td>
                                       <button className="btn btn-xs btn-danger"
                                               onClick={() => {this.deleteKey(item.value)}}>

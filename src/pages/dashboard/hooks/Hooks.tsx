@@ -1,6 +1,7 @@
 import React from 'react'
 import http from '../../../util/http'
 import Pagination from '../../../components/Pagination'
+import { getFormattedTime } from '../../../util/time'
 
 interface Props {
   match: any
@@ -171,7 +172,7 @@ class Hooks extends React.Component<Props, State> {
                                     <td className="text-center">
                                       {item.auth ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i>}
                                     </td>
-                                    <td>{item.updateTime}</td>
+                                    <td>{getFormattedTime(item.updateTime)}</td>
                                     <td>
                                       <button className="btn btn-xs btn-danger"
                                               onClick={() => {this.deleteHook(item.uuid)}}>

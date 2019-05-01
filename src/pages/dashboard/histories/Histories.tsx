@@ -1,6 +1,7 @@
 import React from 'react'
 import http from '../../../util/http'
 import Pagination from '../../../components/Pagination'
+import { getFormattedTime } from '../../../util/time'
 
 interface HistoryItem {
   uuid: string
@@ -95,7 +96,7 @@ class Histories extends React.Component<Props, State> {
                               this.state.data.map((item, index) =>
                                   <tr key={index}>
                                     <td><code>/hooks/{item.routerId}</code></td>
-                                    <td><code>{item.triggerTime}</code></td>
+                                    <td>{getFormattedTime(item.triggerTime)}</td>
                                     <td>
                                       <button className="btn btn-default btn-xs"
                                               data-toggle="modal"

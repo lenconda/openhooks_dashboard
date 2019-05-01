@@ -7,11 +7,16 @@ import { history } from '../../App'
 import Hooks from './hooks/Hooks'
 import Keys from './keys/Keys'
 import Histories from './histories/Histories'
+import { ToastsStore } from 'react-toasts'
 
 interface Props {}
 interface State {
-  username: string,
+  username: string
   userId: string
+  editUsername: string
+  oldPassword: string
+  editPassword: string
+  retypePassword: string
 }
 
 class Dashboard extends React.Component<Props, State> {
@@ -19,25 +24,58 @@ class Dashboard extends React.Component<Props, State> {
     super(props)
     this.state = {
       username: '',
-      userId: ''
+      userId: '',
+      editUsername: '',
+      oldPassword: '',
+      editPassword: '',
+      retypePassword: ''
     }
   }
 
   componentDidMount(): void {
+    this.getProfile()
+  }
+
+  getProfile = () => {
     http.get('/api/profile')
-        .then(res => {
-          if (res)
-            this.setState({
-              username: res.data.data.username,
-              userId: res.data.data.uuid
-            })
+    .then(res => {
+      if (res)
+        this.setState({
+          username: res.data.data.username,
+          editUsername: res.data.data.username,
+          userId: res.data.data.uuid
         })
+    })
   }
 
   logout = () => {
     localStorage.removeItem('token')
     sessionStorage.removeItem('token')
     history.push('/login')
+  }
+
+  updateUsername = () => {
+    http.put('/api/profile', {
+      updates: {
+        username: this.state.editUsername
+      }
+    })
+    .then(res => {
+      if (res)
+        this.getProfile()
+    })
+  }
+
+  updatePassword = () => {
+    if (this.state.retypePassword === this.state.editPassword)
+      http.put('/api/profile', {
+        updates: {
+          password: this.state.oldPassword,
+          newPassword: this.state.editPassword
+        }
+      })
+    else
+      ToastsStore.error('New password does not equals to retyped password')
   }
 
   render() {
@@ -76,8 +114,16 @@ class Dashboard extends React.Component<Props, State> {
                     </a>
                     <ul className="dropdown-menu">
                       <li className="dropdown-header">{this.state.username}({this.state.userId})</li>
-                      <li><a><i className="fa fa-user-circle"></i> Change username</a></li>
-                      <li><a><i className="fa fa-key"></i> Change password</a></li>
+                      <li>
+                        <a role="button" data-toggle="modal" data-target="#update_username">
+                          <i className="fa fa-user-circle"></i> Change username
+                        </a>
+                      </li>
+                      <li>
+                        <a role="button" data-toggle="modal" data-target="#update_password">
+                          <i className="fa fa-key"></i> Change password
+                        </a>
+                      </li>
                       <li role="separator" className="divider"></li>
                       <li>
                         <a onClick={this.logout}>
@@ -96,6 +142,92 @@ class Dashboard extends React.Component<Props, State> {
             <Route path={'/dashboard/histories/:page'} component={Histories}/>
             <Redirect to={'/dashboard/hooks/1/'}/>
           </Switch>
+          <div className="modal fade" id="update_username" role="dialog"
+               aria-labelledby="myModalLabel">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <button type="button" className="close" data-dismiss="modal"
+                          aria-label="Close"><span
+                      aria-hidden="true">&times;</span></button>
+                  <h4 className="modal-title text-ellipsis" id="myModalLabel">
+                    <i className="fa fa-user-circle"></i> Rename for {this.state.username}({this.state.userId})
+                  </h4>
+                </div>
+                <div className="modal-body">
+                  <div className="form-group">
+                    <label>New username</label>
+                    <input className="form-control"
+                              value={this.state.editUsername}
+                              onChange={e => this.setState({ editUsername: e.target.value })}/>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-sm btn-default" data-dismiss="modal">
+                    <i className="fa fa-times"></i> Cancel
+                  </button>
+                  <button
+                      className="btn btn-sm btn-primary"
+                      data-dismiss="modal"
+                      onClick={this.updateUsername}
+                      disabled={this.state.editUsername === ''}>
+                    <i className="fa fa-save"></i> Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal fade" id="update_password" role="dialog"
+               aria-labelledby="myModalLabel">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <button type="button" className="close" data-dismiss="modal"
+                          aria-label="Close"><span
+                      aria-hidden="true">&times;</span></button>
+                  <h4 className="modal-title text-ellipsis" id="myModalLabel">
+                    <i className="fa fa-key"></i> Change password
+                  </h4>
+                </div>
+                <div className="modal-body">
+                  <div className="form-group">
+                    <label>Old password</label>
+                    <input className="form-control"
+                           type="password"
+                           value={this.state.oldPassword}
+                           onChange={e => this.setState({ oldPassword: e.target.value })}/>
+                  </div>
+                  <div className="form-group">
+                    <label>New password</label>
+                    <input className="form-control"
+                           type="password"
+                           value={this.state.editPassword}
+                           onChange={e => this.setState({ editPassword: e.target.value })}/>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Retype password</label>
+                    <input className="form-control"
+                           type="password"
+                           value={this.state.retypePassword}
+                           onChange={e => this.setState({ retypePassword: e.target.value })}/>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-sm btn-default" data-dismiss="modal">
+                    <i className="fa fa-times"></i> Cancel
+                  </button>
+                  <button
+                      className="btn btn-sm btn-primary"
+                      data-dismiss="modal"
+                      onClick={this.updatePassword}
+                      disabled={this.state.oldPassword === '' || this.state.editPassword === ''}>
+                    <i className="fa fa-save"></i> Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
     )
   }

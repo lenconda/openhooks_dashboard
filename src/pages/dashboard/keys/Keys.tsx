@@ -89,63 +89,61 @@ class Keys extends React.Component<Props, State> {
       })
   }
 
+  renderTable = () => {
+    return this.state.data.length === 0 ? <span>There are no keys yet...</span> :
+        <div className="overflow-x-auto">
+          <table className="table table-bordered table-striped table-hover text-nowrap">
+            <thead>
+            <tr>
+              <th>Key</th>
+              <th>Create Time</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {
+              this.state.data.map((item, index) =>
+                  <tr key={index}>
+                    <td><code>{item.value}</code></td>
+                    <td>{getFormattedTime(item.createTime)}</td>
+                    <td>
+                      <button className="btn btn-sm btn-danger"
+                              onClick={() => {this.deleteKey(item.value)}}>
+                        <i className="fa fa-trash"></i> Delete
+                      </button>
+                    </td>
+                  </tr>
+              )
+            }
+            </tbody>
+          </table>
+        </div>
+  }
+
   render() {
     return (
         <div>
-          <div className="container-fluid">
-            <div className="row">
-              <div className="panel panel-default">
-                <div className="panel-heading">
-                  <button type="button"
-                          onClick={this.generateKey}
-                          className="btn btn-success btn-sm">
-                    <i className="fa fa-plus"></i>&nbsp;Generate Key
-                  </button>
-                  <button type="button"
-                          className="btn btn-danger btn-sm"
-                          style={{marginLeft: 10}}
-                          onClick={this.clearKeys}>
-                    <i className="fa fa-trash"></i>&nbsp;Clear All
-                  </button>
-                </div>
-                <div className="panel-body" style={{overflowX: 'scroll'}}>
-                  {
-                    this.state.data.length === 0 ? <span>There are no keys yet...</span> :
-                        <table className="table table-bordered table-striped table-hover">
-                          <thead>
-                            <tr>
-                              <th>Key</th>
-                              <th>Create Time</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {
-                              this.state.data.map((item, index) =>
-                                  <tr key={index}>
-                                    <td><code>{item.value}</code></td>
-                                    <td>{getFormattedTime(item.createTime)}</td>
-                                    <td>
-                                      <button className="btn btn-xs btn-danger"
-                                              onClick={() => {this.deleteKey(item.value)}}>
-                                        <i className="fa fa-trash"></i> Delete
-                                      </button>
-                                    </td>
-                                  </tr>
-                              )
-                            }
-                          </tbody>
-                        </table>
-                  }
-                </div>
-                {
-                  this.state.data.length === 0 ? null :
-                      <div className="panel-footer">
-                        <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/keys"/>
-                      </div>
-                }
-              </div>
-            </div>
+          <div className="mb-3">
+            <button type="button"
+                    onClick={this.generateKey}
+                    className="btn btn-success btn-sm">
+              <i className="fa fa-key"></i>&nbsp;Generate Key
+            </button>
+            <button type="button"
+                    className="btn btn-danger btn-sm"
+                    style={{marginLeft: 10}}
+                    onClick={this.clearKeys}>
+              <i className="fa fa-trash"></i>&nbsp;Clear All
+            </button>
+          </div>
+          {this.renderTable()}
+          <div className="my-3">
+            {
+              this.state.data.length === 0 ? null :
+                  <div className="panel-footer">
+                    <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/keys"/>
+                  </div>
+            }
           </div>
         </div>
     )

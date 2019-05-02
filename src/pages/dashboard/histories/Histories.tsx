@@ -70,75 +70,75 @@ class Histories extends React.Component<Props, State> {
     })
   }
 
+  renderTable = () => {
+    return this.state.data.length === 0 ? <span>There are no histories yet...</span> :
+        <div className="overflow-x-auto">
+          <table className="table table-bordered table-striped table-hover text-nowrap">
+            <thead>
+            <tr>
+              <th>Hook</th>
+              <th>Trigger Time</th>
+              <th>Result</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {
+              this.state.data.map((item, index) =>
+                  <tr key={index}>
+                    <td><code>/hooks/{item.routerId}</code></td>
+                    <td>{getFormattedTime(item.triggerTime)}</td>
+                    <td>
+                      <button className="btn btn-primary btn-sm"
+                              data-toggle="modal"
+                              data-target="#view_result"
+                              onClick={() => {this.handleViewHistory(item)}}>
+                        <i className="fa fa-eye"></i> View
+                      </button>
+                    </td>
+                    <td>
+                      {
+                        item.succeeded ?
+                            <span className="badge badge-pill badge-success">
+                            <i className="fa fa-smile"></i> Succeded
+                          </span> :
+                            <span className="badge badge-pill badge-danger">
+                            <i className="fa fa-frown"></i> Failed
+                          </span>
+                      }
+                    </td>
+                  </tr>
+              )
+            }
+            </tbody>
+          </table>
+        </div>
+  }
+
   render() {
     return (
         <div>
-          <div className="container-fluid">
-            <div className="row">
-              <div className="panel panel-default">
-                <div className="panel-heading">
-                  Trigger Logs
-                </div>
-                <div className="panel-body" style={{overflowX: 'scroll'}}>
-                  {
-                    this.state.data.length === 0 ? <span>There are no hooks yet...</span> :
-                        <table className="table table-bordered table-striped table-hover">
-                          <thead>
-                            <tr>
-                              <th>Hook</th>
-                              <th>Trigger Time</th>
-                              <th>Result</th>
-                              <th>Succeeded</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {
-                              this.state.data.map((item, index) =>
-                                  <tr key={index}>
-                                    <td><code>/hooks/{item.routerId}</code></td>
-                                    <td>{getFormattedTime(item.triggerTime)}</td>
-                                    <td>
-                                      <button className="btn btn-default btn-xs"
-                                              data-toggle="modal"
-                                              data-target="#view_result"
-                                              onClick={() => {this.handleViewHistory(item)}}>
-                                        <i className="fa fa-eye"></i> View
-                                      </button>
-                                    </td>
-                                    <td className="text-center">
-                                      {
-                                        item.succeeded ?
-                                            <i className="fa fa-smile text-success"></i> :
-                                            <i className="fa fa-frown text-danger"></i>
-                                      }
-                                    </td>
-                                  </tr>
-                              )
-                            }
-                          </tbody>
-                        </table>
-                  }
-                </div>
-                {
-                  this.state.data.length === 0 ? null :
-                      <div className="panel-footer">
-                        <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/histories" />
-                      </div>
-                }
-              </div>
-            </div>
+          {this.renderTable()}
+          <div className="my-3">
+            {
+              this.state.data.length === 0 ? null :
+                  <div className="panel-footer">
+                    <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/histories" />
+                  </div>
+            }
           </div>
           <div className="modal fade" id="view_result" role="dialog"
                aria-labelledby="myModalLabel">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header">
-                  <button type="button" className="close" data-dismiss="modal"
-                          aria-label="Close"><span
-                      aria-hidden="true">&times;</span></button>
-                  <h4 className="modal-title text-ellipsis" id="myModalLabel">
+                  <h5 className="modal-title text-ellipsis">
                     <i className="fa fa-eye"></i> View Result of {this.state.currentHistory.uuid}
-                  </h4>
+                  </h5>
+                  <button type="button" className="close" data-dismiss="modal"
+                          aria-label="Close">
+                    <span aria-hidden="true" className="text-white">&times;</span>
+                  </button>
                 </div>
                 <div className="modal-body">
                   <pre>
@@ -148,7 +148,7 @@ class Histories extends React.Component<Props, State> {
                   </pre>
                 </div>
                 <div className="modal-footer">
-                  <button className="btn btn-sm btn-default" data-dismiss="modal">
+                  <button className="btn btn-sm btn-primary" data-dismiss="modal">
                     <i className="fa fa-check"></i> OK
                   </button>
                 </div>

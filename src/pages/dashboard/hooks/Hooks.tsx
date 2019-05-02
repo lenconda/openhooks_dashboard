@@ -130,105 +130,106 @@ class Hooks extends React.Component<Props, State> {
       })
   }
 
+  renderTable = () => {
+    return this.state.data.length === 0 ? <span>There are no hooks yet...</span> :
+        <div className="overflow-x-auto">
+          <table className="table table-bordered table-striped table-hover text-nowrap">
+            <thead>
+            <tr>
+              <th>Path</th>
+              <th>Command</th>
+              <th>Description</th>
+              <th>Authentication</th>
+              <th>Update Time</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {
+              this.state.data.map((item, index) =>
+                  <tr key={index}>
+                    <td><code>/hooks/{item.uuid}</code></td>
+                    <td><code>{item.command}</code></td>
+                    <td>{item.description}</td>
+                    <td className="text-center">
+                      {item.auth ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i>}
+                    </td>
+                    <td>{getFormattedTime(item.updateTime)}</td>
+                    <td>
+                      <button className="btn btn-sm btn-danger"
+                              onClick={() => {this.deleteHook(item.uuid)}}>
+                        <i className="fa fa-trash"></i> Delete
+                      </button>
+                      <button type="button"
+                              className="btn btn-sm btn-warning"
+                              data-toggle="modal"
+                              data-target="#edit_hook"
+                              style={{marginLeft: 5}}
+                              onClick={() => this.handleEditHook(item)}>
+                        <i className="fa fa-edit"></i> Edit
+                      </button>
+                    </td>
+                  </tr>
+              )
+            }
+            </tbody>
+          </table>
+        </div>
+  }
+
   render() {
     return (
         <div>
-          <div className="container-fluid">
-            <div className="row">
-              <div className="panel panel-default">
-                <div className="panel-heading">
-                  <button type="button" className="btn btn-success btn-sm"
-                          data-toggle="modal" data-target="#add_hook">
-                    <i className="fa fa-plus"></i>&nbsp;Add Hook
-                  </button>
-                  <button type="button"
-                          className="btn btn-danger btn-sm"
-                          style={{marginLeft: 10}}
-                          onClick={this.clearHooks}>
-                    <i className="fa fa-trash"></i>&nbsp;Clear All
-                  </button>
-                </div>
-                <div className="panel-body" style={{overflowX: 'scroll'}}>
-                  {
-                    this.state.data.length === 0 ? <span>There are no hooks yet...</span> :
-                        <table className="table table-bordered table-striped table-hover">
-                          <thead>
-                            <tr>
-                              <th>Path</th>
-                              <th>Command</th>
-                              <th>Description</th>
-                              <th>Authentication</th>
-                              <th>Update Time</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {
-                              this.state.data.map((item, index) =>
-                                  <tr key={index}>
-                                    <td><code>/hooks/{item.uuid}</code></td>
-                                    <td><code>{item.command}</code></td>
-                                    <td>{item.description}</td>
-                                    <td className="text-center">
-                                      {item.auth ? <i className="fa fa-check"></i> : <i className="fa fa-times"></i>}
-                                    </td>
-                                    <td>{getFormattedTime(item.updateTime)}</td>
-                                    <td>
-                                      <button className="btn btn-xs btn-danger"
-                                              onClick={() => {this.deleteHook(item.uuid)}}>
-                                        <i className="fa fa-trash"></i> Delete
-                                      </button>
-                                      <button type="button"
-                                              className="btn btn-xs btn-warning"
-                                              data-toggle="modal"
-                                              data-target="#edit_hook"
-                                              style={{marginLeft: 5}}
-                                              onClick={() => this.handleEditHook(item)}>
-                                        <i className="fa fa-edit"></i> Edit
-                                      </button>
-                                    </td>
-                                  </tr>
-                              )
-                            }
-                          </tbody>
-                        </table>
-                  }
-                </div>
-                {
-                  this.state.data.length === 0 ? null :
-                      <div className="panel-footer">
-                        <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/hooks" />
-                      </div>
-                }
-              </div>
-            </div>
+          <div className="mb-3">
+            <button type="button" className="btn btn-success btn-sm"
+                    data-toggle="modal" data-target="#add_hook">
+              <i className="fa fa-lightbulb"></i>&nbsp;Add a Hook
+            </button>
+            <button type="button"
+                    className="btn btn-danger btn-sm"
+                    style={{marginLeft: 10}}
+                    onClick={this.clearHooks}>
+              <i className="fa fa-trash"></i>&nbsp;Clear All
+            </button>
+          </div>
+          {this.renderTable()}
+          <div className="my-3">
+            {
+              this.state.data.length === 0 ? null :
+                  <div className="panel-footer">
+                    <Pagination current={this.state.currentPage} total={this.state.pages} route="/dashboard/hooks" />
+                  </div>
+            }
           </div>
           <div className="modal fade" id="add_hook" role="dialog"
                aria-labelledby="myModalLabel">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header">
+                  <h5 className="modal-title text-ellipsis"><i className="fa fa-lightbulb"></i> Add a Hook</h5>
                   <button type="button" className="close" data-dismiss="modal"
-                          aria-label="Close"><span
-                      aria-hidden="true">&times;</span></button>
-                  <h4 className="modal-title text-ellipsis" id="myModalLabel"><i className="fa fa-lightbulb"></i> Add a Hook</h4>
+                          aria-label="Close">
+                    <span aria-hidden="true" className="text-white">&times;</span>
+                  </button>
                 </div>
                 <div className="modal-body">
                   <div className="form-group">
                     <label>Shell command</label>
-                    <textarea className="form-control"
-                              value={this.state.createCommand}
-                              onChange={e => this.setState({ createCommand: e.target.value })}/>
+                    <code>
+                      <textarea className="form-control form-control-sm"
+                                value={this.state.createCommand}
+                                onChange={e => this.setState({ createCommand: e.target.value })}/>
+                    </code>
                   </div>
                   <div className="form-group">
                     <label>Description</label>
-                    <textarea className="form-control"
+                    <textarea className="form-control form-control-sm"
                               value={this.state.createDescription}
                               onChange={e => this.setState({ createDescription: e.target.value })}/>
                   </div>
                   <div className="form-group">
                     <label>Authentication</label>
-                    <select className="form-control"
+                    <select className="form-control form-control-sm"
                             onChange={e => this.setState({ createAuthentication: e.target.value })}>
                       <option value="0" selected={this.state.createAuthentication === '0'}>Use access key</option>
                       <option value="1" selected={this.state.createAuthentication === '1'}>Do not use any key</option>
@@ -236,9 +237,9 @@ class Hooks extends React.Component<Props, State> {
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button className="btn btn-sm btn-default" data-dismiss="modal"><i className="fa fa-times"></i> Cancel</button>
+                  <button className="btn btn-sm btn-primary" data-dismiss="modal"><i className="fa fa-times"></i> Cancel</button>
                   <button
-                      className="btn btn-sm btn-primary"
+                      className="btn btn-sm btn-success"
                       data-dismiss="modal"
                       onClick={this.createHook}
                       disabled={this.state.createAuthentication === ''
@@ -255,29 +256,32 @@ class Hooks extends React.Component<Props, State> {
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header">
-                  <button type="button" className="close" data-dismiss="modal"
-                          aria-label="Close"><span
-                      aria-hidden="true">&times;</span></button>
-                  <h4 className="modal-title text-ellipsis" id="myModalLabel">
+                  <h5 className="modal-title text-ellipsis">
                     <i className="fa fa-edit"></i> Edit Hook {this.state.editUuid}
-                  </h4>
+                  </h5>
+                  <button type="button" className="close" data-dismiss="modal"
+                          aria-label="Close">
+                    <span aria-hidden="true" className="text-white">&times;</span>
+                  </button>
                 </div>
                 <div className="modal-body">
                   <div className="form-group">
                     <label>Shell command</label>
-                    <textarea className="form-control"
-                              value={this.state.editCommand}
-                              onChange={e => this.setState({ editCommand: e.target.value })}/>
+                    <code>
+                      <textarea className="form-control form-control-sm"
+                                value={this.state.editCommand}
+                                onChange={e => this.setState({ editCommand: e.target.value })}/>
+                    </code>
                   </div>
                   <div className="form-group">
                     <label>Description</label>
-                    <textarea className="form-control"
+                    <textarea className="form-control form-control-sm"
                               value={this.state.editDescription}
                               onChange={e => this.setState({ editDescription: e.target.value })}/>
                   </div>
                   <div className="form-group">
                     <label>Authentication</label>
-                    <select className="form-control"
+                    <select className="form-control form-control-sm"
                             onChange={e => this.setState({ editAuthentication: e.target.value })}>
                       <option value="0" selected={this.state.editAuthentication === '0'}>Use access key</option>
                       <option value="1" selected={this.state.editAuthentication === '1'}>Do not use any key</option>
@@ -285,11 +289,11 @@ class Hooks extends React.Component<Props, State> {
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button className="btn btn-sm btn-default" data-dismiss="modal" onClick={this.clearEditHook}>
+                  <button className="btn btn-sm btn-primary" data-dismiss="modal" onClick={this.clearEditHook}>
                     <i className="fa fa-times"></i> Cancel
                   </button>
                   <button
-                      className="btn btn-sm btn-primary"
+                      className="btn btn-sm btn-success"
                       data-dismiss="modal"
                       onClick={this.updateHook}
                       disabled={this.state.editAuthentication === ''

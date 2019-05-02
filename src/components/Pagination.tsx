@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 import { history } from '../App'
 
@@ -45,23 +46,26 @@ class Pagination extends React.Component<Props, State> {
     return (
         <nav>
           <ul className="pagination">
-            <li>
-              <button disabled={this.props.current === 1} onClick={() => this.handleHrefChange(1)}>
-                <span aria-hidden="true">&laquo;</span>
-              </button>
+            <li className={`page-item ${this.props.current === 1 ? 'disabled' : ''}`}>
+              <a className="page-link"
+                 onClick={() => {if (!(this.props.current === 1))
+                   this.handleHrefChange(1)}}>&laquo;
+              </a>
             </li>
-            <li>
-              <button disabled={this.props.current === 1} onClick={() => this.handleHrefChange(this.props.current - 1)}>
-                <span aria-hidden="true">&lsaquo;</span>
-              </button>
+            <li className={`page-item ${this.props.current === 1 ? 'disabled' : ''}`}>
+              <a className="page-link"
+                 onClick={() => {if (!(this.props.current === 1))
+                   this.handleHrefChange(this.props.current - 1)}}>&lsaquo;
+              </a>
             </li>
             {
-              this.props.total <= 10 || this.getPages()[0] === 1 ? null : <li><button disabled>...</button></li>
+              this.props.total <= 10 || this.getPages()[0] === 1 ? null :
+                  <li className="page-item disabled"><a className="page-link">...</a></li>
             }
             {
               this.getPages().map((value, index) =>
-                  <li key={index}>
-                    <button className={this.props.current === value ? 'active' : ''} onClick={() => this.handleHrefChange(value)}>{value}</button>
+                  <li className={`page-item ${this.props.current === value ? 'active' : ''}`} key={index}>
+                    <a className="page-link" onClick={() => this.handleHrefChange(value)}>{value}</a>
                   </li>
               )
             }
@@ -69,17 +73,17 @@ class Pagination extends React.Component<Props, State> {
               this.props.total <= 10 || this.getPages().pop() === this.props.total
                   ? null : <li><button disabled>...</button></li>
             }
-            <li>
-              <button disabled={this.props.current === this.props.total}
-                      onClick={() => this.handleHrefChange(this.props.current + 1)}>
-                <span aria-hidden="true">&rsaquo;</span>
-              </button>
+            <li className={`page-item ${this.props.current === this.props.total ? 'disabled' : ''}`}>
+              <a className="page-link"
+                 onClick={() => {if (!(this.props.current === this.props.total))
+                   this.handleHrefChange(this.props.current + 1)}}>&rsaquo;
+              </a>
             </li>
-            <li>
-              <button disabled={this.props.current === this.props.total}
-                      onClick={() => this.handleHrefChange(this.props.total)}>
-                <span aria-hidden="true">&raquo;</span>
-              </button>
+            <li className={`page-item ${this.props.current === this.props.total ? 'disabled' : ''}`}>
+              <a className="page-link"
+                 onClick={() => {if (!(this.props.current === this.props.total))
+                   this.handleHrefChange(this.props.total)}}>&raquo;
+              </a>
             </li>
           </ul>
         </nav>

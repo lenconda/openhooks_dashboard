@@ -82,32 +82,40 @@ class Dashboard extends React.Component<Props, State> {
     return (
         <div>
           <nav className="navbar navbar-dark bg-dark mb-4">
-            <NavLink className="navbar-brand" to="/dashboard">Openhooks Dashboard</NavLink>
+            <NavLink className="navbar-brand" to="/dashboard">
+              <img src="/logo.png" height="30px" width="30px" alt=""/>
+            </NavLink>
+            <button className="navbar-toggler d-lg-none d-xl-none" type="button"
+                    data-toggle="collapse" data-target="#user"
+                    aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+              <i className="fa fa-user"></i>
+            </button>
+            <div className="collapse navbar-collapse" id="user">
+              <ul className="navbar-nav mr-auto">
+                <li className="nav-item">
+                  <a className="nav-link" role="button" data-toggle="modal" data-target="#update_username">
+                    <i className="fa fa-edit"></i> Change username
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" role="button" data-toggle="modal" data-target="#update_password">
+                    <i className="fa fa-key"></i> Change password
+                  </a>
+                </li>
+                <div className="dropdown-divider"></div>
+                <li className="nav-item">
+                  <a className="nav-link" role="button" onClick={this.logout}>
+                    <i className="fa fa-sign-out-alt"></i> Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
           </nav>
           <div className="container-fluid">
             <div className="row">
               <div className="col">
                 <div className="d-xs-block d-sm-block d-md-block d-lg-none d-xl-none">
-                  <div className="dropdown show mb-3">
-                    <a className="btn btn-primary btn-sm dropdown-toggle text-ellipsis" href="#"
-                       role="button" id="dropdownMenuLink"
-                       data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false">
-                      <i className="fa fa-user-circle"></i> {this.state.username}({this.state.userId})
-                    </a>
-                    <div className="dropdown-menu">
-                      <a className="dropdown-item" role="button" data-toggle="modal" data-target="#update_username">
-                        <i className="fa fa-edit"></i> Change username
-                      </a>
-                      <a className="dropdown-item" role="button" data-toggle="modal" data-target="#update_password">
-                        <i className="fa fa-key"></i> Change password
-                      </a>
-                      <div className="dropdown-divider"></div>
-                      <a className="dropdown-item" role="button" onClick={this.logout}>
-                        <i className="fa fa-sign-out-alt"></i> Logout
-                      </a>
-                    </div>
-                  </div>
                   <ul className="nav nav-pills mb-3">
                     <li className="nav-item">
                       <NavLink to="/dashboard/hooks" className="nav-link">Hooks</NavLink>
@@ -126,21 +134,11 @@ class Dashboard extends React.Component<Props, State> {
               <div className="col col-xl-2 col-lg-3">
                 <div className="d-none d-xs-none d-sm-none d-md-none d-lg-block d-xl-block">
                   <ul className="nav nav-pills flex-column mb-3">
-                    <li className="nav-item">
-                      <NavLink to="/dashboard/hooks" className="nav-link">Hooks</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink to="/dashboard/keys" className="nav-link">Keys</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink to="/dashboard/histories" className="nav-link">Histories</NavLink>
-                    </li>
-                    <hr/>
                     <li className="nav-item dropdown" style={{ width: '100%' }}>
                       <a className="nav-link dropdown-toggle text-ellipsis"
                          data-toggle="dropdown" href="#" role="button"
                          aria-haspopup="true" aria-expanded="false">
-                        <i className="fa fa-user-circle"></i> {this.state.username}({this.state.userId})
+                        <i className="fa fa-user-circle"></i> {this.state.username}
                       </a>
                       <div className="dropdown-menu">
                         <a className="dropdown-item" role="button" data-toggle="modal" data-target="#update_username">
@@ -154,6 +152,16 @@ class Dashboard extends React.Component<Props, State> {
                           <i className="fa fa-sign-out-alt"></i> Logout
                         </a>
                       </div>
+                    </li>
+                    <hr/>
+                    <li className="nav-item">
+                      <NavLink to="/dashboard/hooks" className="nav-link">Hooks</NavLink>
+                    </li>
+                    <li className="nav-item">
+                      <NavLink to="/dashboard/keys" className="nav-link">Keys</NavLink>
+                    </li>
+                    <li className="nav-item">
+                      <NavLink to="/dashboard/histories" className="nav-link">Histories</NavLink>
                     </li>
                   </ul>
                 </div>

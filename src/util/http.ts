@@ -20,8 +20,10 @@ axios.interceptors.response.use(response => {
     localStorage.removeItem('token')
     ToastsStore.error('Login first, please')
     history.push('/login')
-  } else
-    ToastsStore.error(error.message)
+  } else {
+    if (error.response.data.message)
+      ToastsStore.error(error.response.data.message)
+  }
 })
 
 export default axios

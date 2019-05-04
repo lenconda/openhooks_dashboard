@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Switch, Link, NavLink, Redirect } from 'react-router-dom'
+import { Route, Switch, NavLink, Redirect } from 'react-router-dom'
 import './Dashboard.css'
 import http from '../../util/http'
 import { history } from '../../App'
@@ -7,7 +7,7 @@ import { history } from '../../App'
 import Hooks from './hooks/Hooks'
 import Keys from './keys/Keys'
 import Histories from './histories/Histories'
-import { ToastsStore } from 'react-toasts'
+import { ToastsStore } from '../../components/notification'
 
 interface Props {}
 interface State {

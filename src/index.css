@@ -33,3 +33,32 @@ code {
 .overflow-y-auto {
   overflow-y: auto;
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+.toasts-container {
+  position: fixed;
+  overflow: hidden;
+  z-index: 999999999999;
+  max-height: calc(100vh - 10px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.notification {
+  animation-name: fadeInUp;
+  animation-duration: .4s;
+  animation-fill-mode: both;
+}

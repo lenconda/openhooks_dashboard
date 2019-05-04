@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { history } from '../App'
-import { ToastsStore } from 'react-toasts'
+import { ToastsStore } from '../components/notification'
 
 axios.defaults.timeout = 3600000
 axios.interceptors.request.use(config => {

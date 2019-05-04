@@ -1,7 +1,6 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 
-import { history } from '../App'
+import { history } from '../../App'
 
 interface State {}
 interface Props {

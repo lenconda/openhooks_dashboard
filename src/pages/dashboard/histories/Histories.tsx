@@ -1,6 +1,6 @@
 import React from 'react'
 import http from '../../../util/http'
-import Pagination from '../../../components/Pagination'
+import Pagination from '../../../components/pagination/Pagination'
 import { getFormattedTime } from '../../../util/time'
 
 interface HistoryItem {

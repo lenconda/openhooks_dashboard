@@ -5,7 +5,7 @@ import { Route, Router, Redirect, Switch } from 'react-router-dom'
 import {
   ToastsContainer,
   ToastsContainerPosition,
-  ToastsStore } from 'react-toasts'
+  ToastsStore } from './components/notification'
 import Login from './pages/login/Login'
 import Dashboard from './pages/dashboard/Dashboard'
 
@@ -22,7 +22,7 @@ class App extends React.Component {
               <Redirect to={'/dashboard'}/>
             </Switch>
           </Router>
-          <ToastsContainer position={ToastsContainerPosition.TOP_RIGHT} store={ToastsStore}/>
+          <ToastsContainer position={ToastsContainerPosition.TOP_CENTER} store={ToastsStore}/>
         </div>
     )
   }
